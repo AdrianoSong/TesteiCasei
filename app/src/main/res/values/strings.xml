@@ -1,4 +1,16 @@
 <resources>
     <string name="app_name">TesteiCasei</string>
+    <string name="search_hint">escreva aqui</string>
     <string name="action_settings">Settings</string>
+    <string name="action_search">Search</string>
+    <string name="action_share">Share</string>
+
+    <string name="txtSearch">Busque um filme</string>
+    <string name="txtSearchInfo">Para buscar um filme é simples, basta digitar o título no campo
+        de busca.</string>
+
+    <string name="txtSinopse">Sinopse:</string>
+    <string name="txtDetalhes">DETALHES</string>
+    <string name="title_activity_movie_detail">MovieDetailActivity</string>
+
 </resources>
