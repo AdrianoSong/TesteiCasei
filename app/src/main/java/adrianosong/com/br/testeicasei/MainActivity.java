@@ -139,7 +139,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
-                hideOrShowViews(SHOW);
+                if(recyclerView.getAdapter().getItemCount() == 0) {
+                    hideOrShowViews(SHOW);
+                }
             }
         });
 
