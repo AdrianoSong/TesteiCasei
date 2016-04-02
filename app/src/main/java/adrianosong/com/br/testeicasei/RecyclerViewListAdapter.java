@@ -102,6 +102,28 @@ public class RecyclerViewListAdapter extends RecyclerView.Adapter<RecyclerViewLi
 
                 holder.txtPlot.setText(movie.getPlot());
 
+                try {
+                    // Retrieves an image specified by the URL, displays it in the UI. Via Volley
+                    ImageRequest imageRequest = new ImageRequest(movie.getPoster(), new Response.Listener<Bitmap>() {
+                        @Override
+                        public void onResponse(Bitmap response) {
+                            holder.imgPoster.setImageBitmap(response);
+                        }
+                    }, 0, 0, null, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            error.printStackTrace();
+                        }
+                    });
+
+                    //adicionando a requisicao
+                    MyVolleySingleton.getInstance(context).addToRequestQueue(imageRequest);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -112,27 +134,6 @@ public class RecyclerViewListAdapter extends RecyclerView.Adapter<RecyclerViewLi
 
         //adicionando a requisicao
         MyVolleySingleton.getInstance(context).addToRequestQueue(requestPlot);
-
-        try {
-            // Retrieves an image specified by the URL, displays it in the UI. Via Volley
-            ImageRequest imageRequest = new ImageRequest(shortMovie.getPoster(), new Response.Listener<Bitmap>() {
-                @Override
-                public void onResponse(Bitmap response) {
-                    holder.imgPoster.setImageBitmap(response);
-                }
-            }, 0, 0, null, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    error.printStackTrace();
-                }
-            });
-
-            //adicionando a requisicao
-            MyVolleySingleton.getInstance(context).addToRequestQueue(imageRequest);
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -180,7 +181,7 @@ public class RecyclerViewListAdapter extends RecyclerView.Adapter<RecyclerViewLi
         }
 
         public interface OnItemClick{
-            public void onItemClick(View caller, int itemPosition);
+            void onItemClick(View caller, int itemPosition);
         }
     }
 

@@ -6,6 +6,7 @@
     <string name="action_share">Share</string>
 
     <string name="txtSearch">Busque um filme</string>
+    <string name="txtSearchNull">Filme não encontrado</string>
     <string name="txtSearchInfo">Para buscar um filme é simples, basta digitar o título no campo
         de busca.</string>
 

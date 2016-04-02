@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void retriveData(String query){
 
-        String url = "http://www.omdbapi.com/?s="+ query + "&y=&plot=short&r=json";
+        String url = "http://www.omdbapi.com/?s="+ query.replace(" ", "") + "&y=&plot=short&r=json";
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @SuppressLint("SetTextI18n")
@@ -113,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
 
                 try {
                     jsonarray = response.getJSONArray("Search");
+
                     for (int i = 0; i < jsonarray.length(); i++) {
                         JSONObject jsonobject = jsonarray.getJSONObject(i);
 
@@ -139,8 +140,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
-                if(recyclerView.getAdapter().getItemCount() == 0) {
+                if(recyclerView.getAdapter() != null && recyclerView.getAdapter().getItemCount() == 0) {
                     hideOrShowViews(SHOW);
+                }else{
+                    txtQtdMovies.setText(getResources().getString(R.string.txtSearchNull));
+
                 }
             }
         });
