@@ -66,7 +66,6 @@
             android:layout_width="256dp"
             android:layout_height="60dp"
             android:id="@+id/txtPlot"
-            android:text="New Text"
             android:textSize="14sp"
             android:ellipsize="end"
             android:maxLines="3"

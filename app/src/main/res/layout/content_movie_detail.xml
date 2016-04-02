@@ -55,7 +55,6 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginStart="20dp"
-            android:text="New Text"
             android:textSize="14sp"
             android:textColor="@color/colorBrownishGrey"
             android:layout_marginTop="20dp"
@@ -93,7 +92,6 @@
                 android:paddingTop="10dp"
                 android:textColor="@color/colorBrownishGrey"
                 android:textSize="14sp"
-                android:text="New Text"
                 android:id="@+id/txtActors" />
         </LinearLayout>
 
@@ -122,7 +120,6 @@
                 android:paddingTop="10dp"
                 android:textColor="@color/colorBrownishGrey"
                 android:textSize="14sp"
-                android:text="New Text"
                 android:id="@+id/txtDirectors" />
         </LinearLayout>
 
@@ -151,7 +148,6 @@
                 android:paddingTop="10dp"
                 android:textColor="@color/colorBrownishGrey"
                 android:textSize="14sp"
-                android:text="New Text"
                 android:id="@+id/txtReleased" />
         </LinearLayout>
 
@@ -180,7 +176,6 @@
                 android:paddingTop="10dp"
                 android:textColor="@color/colorBrownishGrey"
                 android:textSize="14sp"
-                android:text="New Text"
                 android:id="@+id/txtDuration" />
         </LinearLayout>
 
@@ -209,7 +204,6 @@
                 android:paddingTop="10dp"
                 android:textColor="@color/colorBrownishGrey"
                 android:textSize="14sp"
-                android:text="New Text"
                 android:id="@+id/txtGenre" />
         </LinearLayout>
 
@@ -238,7 +232,6 @@
                 android:paddingTop="10dp"
                 android:textColor="@color/colorBrownishGrey"
                 android:textSize="14sp"
-                android:text="New Text"
                 android:id="@+id/txtRating" />
         </LinearLayout>
 
@@ -267,7 +260,6 @@
                 android:paddingTop="10dp"
                 android:textColor="@color/colorBrownishGrey"
                 android:textSize="14sp"
-                android:text="New Text"
                 android:id="@+id/txtAwards" />
         </LinearLayout>
 
@@ -296,7 +288,6 @@
                 android:paddingTop="10dp"
                 android:textColor="@color/colorBrownishGrey"
                 android:textSize="14sp"
-                android:text="New Text"
                 android:id="@+id/txtLocation" />
         </LinearLayout>
 
