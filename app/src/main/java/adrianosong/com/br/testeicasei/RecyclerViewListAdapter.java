@@ -11,9 +11,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -24,12 +29,12 @@ import java.util.List;
 public class RecyclerViewListAdapter extends RecyclerView.Adapter<RecyclerViewListAdapter.ViewHolderMovie> {
 
     private Context context;
-    private List<Movie> listaMovies;
+    private List<ShortMovie> listShortMovies;
 
-    public RecyclerViewListAdapter(Context context, List<Movie> listaMovies){
+    public RecyclerViewListAdapter(Context context, List<ShortMovie> listaMovies){
 
         this.context = context;
-        this.listaMovies = listaMovies;
+        this.listShortMovies = listaMovies;
     }
 
 
@@ -42,10 +47,10 @@ public class RecyclerViewListAdapter extends RecyclerView.Adapter<RecyclerViewLi
             @Override
             public void onItemClick(View caller, int itemPosition) {
 
-                Movie movie = listaMovies.get(itemPosition);
+                ShortMovie movie = listShortMovies.get(itemPosition);
 
                 Intent intent = new Intent(context, MovieDetailActivity.class);
-                intent.putExtra("movie", movie);
+                intent.putExtra("shortMovie", movie);
                 context.startActivity(intent);
             }
         });
@@ -58,14 +63,59 @@ public class RecyclerViewListAdapter extends RecyclerView.Adapter<RecyclerViewLi
 
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        Movie movie = listaMovies.get(position);
+        ShortMovie shortMovie = listShortMovies.get(position);
 
-        holder.txtTitle.setText(movie.getTitle());
-        holder.txtPlot.setText(movie.getPlot());
+        holder.txtTitle.setText(shortMovie.getTitle());
 
-        if(movie.getPoster() != null) {
+        String url = "http://www.omdbapi.com/?i=" + shortMovie.getImdbID() + "&plot=short&r=json";
+
+        JsonObjectRequest requestPlot = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+
+                Movie movie = new Movie();
+
+                try {
+                    movie.setTitle(response.getString("Title"));
+                    movie.setYear(response.getString("Year"));
+                    movie.setRated(response.getString("Rated"));
+                    movie.setReleased(response.getString("Released"));
+                    movie.setRuntime(response.getString("Runtime"));
+                    movie.setGenre(response.getString("Genre"));
+                    movie.setDirector(response.getString("Director"));
+                    movie.setWriter(response.getString("Writer"));
+                    movie.setActors(response.getString("Actors"));
+                    movie.setPlot(response.getString("Plot"));
+                    movie.setLanguage(response.getString("Language"));
+                    movie.setCountry(response.getString("Country"));
+                    movie.setAwards(response.getString("Awards"));
+                    movie.setPoster(response.getString("Poster"));
+                    movie.setMetascore(response.getString("Metascore"));
+                    movie.setImdbRating(response.getString("imdbRating"));
+                    movie.setImdbVotes(response.getString("imdbVotes"));
+                    movie.setImdbId(response.getString("imdbID"));
+                    movie.setType(response.getString("Type"));
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                holder.txtPlot.setText(movie.getPlot());
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+
+        //adicionando a requisicao
+        MyVolleySingleton.getInstance(context).addToRequestQueue(requestPlot);
+
+        try {
             // Retrieves an image specified by the URL, displays it in the UI. Via Volley
-            ImageRequest imageRequest = new ImageRequest(movie.getPoster(), new Response.Listener<Bitmap>() {
+            ImageRequest imageRequest = new ImageRequest(shortMovie.getPoster(), new Response.Listener<Bitmap>() {
                 @Override
                 public void onResponse(Bitmap response) {
                     holder.imgPoster.setImageBitmap(response);
@@ -79,14 +129,15 @@ public class RecyclerViewListAdapter extends RecyclerView.Adapter<RecyclerViewLi
 
             //adicionando a requisicao
             MyVolleySingleton.getInstance(context).addToRequestQueue(imageRequest);
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
-
-
     }
 
     @Override
     public int getItemCount() {
-        return listaMovies.size();
+        return listShortMovies.size();
     }
 
     public static class ViewHolderMovie extends RecyclerView.ViewHolder implements View.OnClickListener{

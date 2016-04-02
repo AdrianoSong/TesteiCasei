@@ -1,20 +1,23 @@
 package adrianosong.com.br.testeicasei;
 
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MovieDetailActivity extends AppCompatActivity {
 
@@ -26,25 +29,25 @@ public class MovieDetailActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //toolbar config
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Bundle extras = getIntent().getExtras();
-        Movie movie = (Movie)extras.getSerializable("movie");
+        ShortMovie shortMovie = (ShortMovie)extras.getSerializable("shortMovie");
 
         final ImageView imgPoster = (ImageView) findViewById(R.id.imgPoster);
 
-        TextView txtTitle = (TextView) findViewById(R.id.txtTitle);
-        TextView txtPlot = (TextView) findViewById(R.id.txtPlot);
-        TextView txtActors = (TextView) findViewById(R.id.txtActors);
-        TextView txtDirectors = (TextView) findViewById(R.id.txtDirectors);
-        TextView txtReleased = (TextView) findViewById(R.id.txtReleased);
-        TextView txtDuration = (TextView) findViewById(R.id.txtDuration);
-        TextView txtGenre = (TextView) findViewById(R.id.txtGenre);
-        TextView txtRating = (TextView) findViewById(R.id.txtRating);
-        TextView txtAwards = (TextView) findViewById(R.id.txtAwards);
-        TextView txtLocation = (TextView) findViewById(R.id.txtLocation);
+        final TextView txtTitle = (TextView) findViewById(R.id.txtTitle);
+        final TextView txtPlot = (TextView) findViewById(R.id.txtPlot);
+        final TextView txtActors = (TextView) findViewById(R.id.txtActors);
+        final TextView txtDirectors = (TextView) findViewById(R.id.txtDirectors);
+        final TextView txtReleased = (TextView) findViewById(R.id.txtReleased);
+        final TextView txtDuration = (TextView) findViewById(R.id.txtDuration);
+        final TextView txtGenre = (TextView) findViewById(R.id.txtGenre);
+        final TextView txtRating = (TextView) findViewById(R.id.txtRating);
+        final TextView txtAwards = (TextView) findViewById(R.id.txtAwards);
+        final TextView txtLocation = (TextView) findViewById(R.id.txtLocation);
 
         Typeface robotoRegular = Typeface.createFromAsset(getAssets(),"Roboto-Regular.ttf");
         Typeface helvetica = Typeface.createFromAsset(getAssets(),"Helvetica.ttf");
@@ -61,24 +64,31 @@ public class MovieDetailActivity extends AppCompatActivity {
         txtAwards.setTypeface(helvetica);
         txtLocation.setTypeface(helvetica);
 
-        txtTitle.setText(movie.getTitle());
-        txtPlot.setText(movie.getPlot());
-        txtActors.setText(movie.getActors());
-        txtDirectors.setText(movie.getDirector());
-        txtReleased.setText(movie.getReleased());
-        txtDuration.setText(movie.getRuntime());
-        txtGenre.setText(movie.getGenre());
-        txtRating.setText(movie.getRated());
-        txtAwards.setText(movie.getAwards());
-        txtLocation.setText(movie.getCountry());
+        String url = "http://www.omdbapi.com/?i=" + shortMovie.getImdbID() + "&plot=short&r=json";
 
-        // Retrieves an image specified by the URL, displays it in the UI. Via Volley
-        ImageRequest imageRequest = new ImageRequest(movie.getPoster(), new Response.Listener<Bitmap>() {
+        JsonObjectRequest requestMovie = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(Bitmap response) {
-                imgPoster.setImageBitmap(response);
+            public void onResponse(JSONObject response) {
+
+                try {
+
+                    txtTitle.setText(response.getString("Title"));
+                    txtPlot.setText(response.getString("Plot"));
+                    txtActors.setText(response.getString("Actors"));
+                    txtDirectors.setText(response.getString("Director"));
+                    txtReleased.setText(response.getString("Released"));
+                    txtDuration.setText(response.getString("Runtime"));
+                    txtGenre.setText(response.getString("Genre"));
+                    txtRating.setText(response.getString("Rated"));
+                    txtAwards.setText(response.getString("Awards"));
+                    txtLocation.setText(response.getString("Country"));
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
             }
-        }, 0, 0, null, new Response.ErrorListener() {
+        }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
@@ -86,7 +96,28 @@ public class MovieDetailActivity extends AppCompatActivity {
         });
 
         //adicionando a requisicao
-        MyVolleySingleton.getInstance(this).addToRequestQueue(imageRequest);
+        MyVolleySingleton.getInstance(this).addToRequestQueue(requestMovie);
+
+        try {
+            // Retrieves an image specified by the URL, displays it in the UI. Via Volley
+            ImageRequest imageRequest = new ImageRequest(shortMovie.getPoster(), new Response.Listener<Bitmap>() {
+                @Override
+                public void onResponse(Bitmap response) {
+                    imgPoster.setImageBitmap(response);
+                }
+            }, 0, 0, null, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    error.printStackTrace();
+                }
+            });
+
+            //adicionando a requisicao
+            MyVolleySingleton.getInstance(this).addToRequestQueue(imageRequest);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
     }
 

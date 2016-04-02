@@ -19,6 +19,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -36,8 +37,6 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton btnSearch;
 
     private RecyclerView recyclerView;
-
-    private Movie movie;
 
     @SuppressWarnings({"ConstantConditions", "deprecation"})
     @Override
@@ -94,9 +93,7 @@ public class MainActivity extends AppCompatActivity {
             txtQtdMovies.setVisibility(View.INVISIBLE);
 
         }
-
     }
-
 
     /**
      * Retrieve data from the cloud
@@ -104,47 +101,39 @@ public class MainActivity extends AppCompatActivity {
      */
     private void retriveData(String query){
 
-        String url = "http://www.omdbapi.com/?t="+ query + "&y=&plot=short&r=json";
+        String url = "http://www.omdbapi.com/?s="+ query + "&y=&plot=short&r=json";
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @SuppressLint("SetTextI18n")
             @Override
             public void onResponse(JSONObject response) {
 
-                movie = new Movie();
+                JSONArray jsonarray;
+                List<ShortMovie> listShortMovies = new ArrayList<>();
 
                 try {
-                    movie.setTitle(response.getString("Title"));
-                    movie.setYear(response.getString("Year"));
-                    movie.setRated(response.getString("Rated"));
-                    movie.setReleased(response.getString("Released"));
-                    movie.setRuntime(response.getString("Runtime"));
-                    movie.setGenre(response.getString("Genre"));
-                    movie.setDirector(response.getString("Director"));
-                    movie.setWriter(response.getString("Writer"));
-                    movie.setActors(response.getString("Actors"));
-                    movie.setPlot(response.getString("Plot"));
-                    movie.setLanguage(response.getString("Language"));
-                    movie.setCountry(response.getString("Country"));
-                    movie.setAwards(response.getString("Awards"));
-                    movie.setPoster(response.getString("Poster"));
-                    movie.setMetascore(response.getString("Metascore"));
-                    movie.setImdbRating(response.getString("imdbRating"));
-                    movie.setImdbVotes(response.getString("imdbVotes"));
-                    movie.setImdbId(response.getString("imdbID"));
-                    movie.setType(response.getString("Type"));
+                    jsonarray = response.getJSONArray("Search");
+                    for (int i = 0; i < jsonarray.length(); i++) {
+                        JSONObject jsonobject = jsonarray.getJSONObject(i);
+
+                        ShortMovie shortMovie = new ShortMovie();
+
+                        shortMovie.setTitle(jsonobject.getString("Title"));
+                        shortMovie.setYear(jsonobject.getString("Year"));
+                        shortMovie.setImdbID(jsonobject.getString("imdbID"));
+                        shortMovie.setType(jsonobject.getString("Type"));
+                        shortMovie.setPoster(jsonobject.getString("Poster"));
+
+                        listShortMovies.add(shortMovie);
+                    }
+
+                    recyclerView.setAdapter(new RecyclerViewListAdapter(MainActivity.this, listShortMovies));
+                    txtQtdMovies.setText("Encontramos " + recyclerView.getAdapter().getItemCount() + " resultados:");
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
-                List<Movie> listaMovies = new ArrayList<>();
-                listaMovies.add(movie);
-
-                if(listaMovies.size() > 0){
-                    txtQtdMovies.setText("Encontramos " + listaMovies.size() + " resultados:");
-                    recyclerView.setAdapter(new RecyclerViewListAdapter(MainActivity.this, listaMovies));
-                }
             }
         }, new Response.ErrorListener() {
             @Override
@@ -155,7 +144,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         MyVolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
-
     }
 
     @Override
